@@ -85,15 +85,22 @@ spec:
                 // Second - use kubectl apply from kubectl container
 
                 container(name: 'kubectl') {
-                    sh """cat <<EOF >./k8s/kustomization.yaml
+                    dir (path: './k8s/') {
+                        sh """cat <<EOF >./kustomization.yaml
 resources:
+- backend-deployment.yaml
 - frontend-deployment.yaml
+- backend-service.yaml
+- frontend-service.yaml
+- mysql-service.yaml
+- mysql-stateful.yaml
 images:
 - name: yago0ar/express-fe
   newName: "${params.IMAGE_NAME}"
   newTag: "${BUILD_NUMBER}" 
 EOF"""
-                    sh 'kubectl apply --kustomize ./k8s'
+                        sh 'kubectl apply --kustomize ./'
+                    }
                 }
             }
         }
@@ -120,10 +127,15 @@ spec:
                 }
             }
             steps {
-                echo 'Test deployment stage'
-                // TODO: Using ubuntu container install `curl`
-                // TODO: Use curl to make a request to curl http://frontend:80/books
-                // TODO: You probably have to wait for like 60-120 second till everything is deployed for the first time
+                // Using ubuntu container install `curl`
+                // Use curl to make a request to curl http://frontend:80/books
+                // You probably have to wait for like 60-120 second till everything is deployed for the first time
+                container(name: 'ubuntu') {
+                    sh 'apt-get update --yes'
+                    sh 'apt-get install curl --yes'
+                    sh 'sleep 100'
+                    sh 'curl http://frontend:80/books'
+                }
             }
         }
     }
