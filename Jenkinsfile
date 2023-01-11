@@ -47,7 +47,7 @@ spec:
     }
 
     parameters {
-        string(name: 'IMAGE_NAME', defaultValue: '', description: 'Your image name in format USER_NAME/IMAGE. You can write it as default value if you want')
+        string(name: 'IMAGE_NAME', defaultValue: 'yago0ar/express-fe', description: 'Your image name in format USER_NAME/IMAGE. You can write it as default value if you want')
     }
 
     stages {
@@ -56,6 +56,7 @@ spec:
                 // TODO: Run 'npm test' using the node container
                 // TODO: Make sure you do it inside express-fe folder.
                 // Search google for Jenkins pipeline 'dir' function
+                echo 'Test stage'
             }
         }
         stage('Build image') {
@@ -74,6 +75,7 @@ spec:
         }
         stage('Deploy') {
             steps {
+                echo 'Deployment stage'
                 // TODO: Need to do two things
                 // TODO: First: somehow using bash, substitute new params.IMAGE_NAME and BUILD_NUMBER variable into your frontend deployment.
                 // TODO: Hint: bitnami/kubectl has 'sed' utility available
@@ -104,6 +106,7 @@ spec:
                 }
             }
             steps {
+                echo 'Test deployment stage'
                 // TODO: Using ubuntu container install `curl`
                 // TODO: Use curl to make a request to curl http://frontend:80/books
                 // TODO: You probably have to wait for like 60-120 second till everything is deployed for the first time
