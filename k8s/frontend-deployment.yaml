@@ -1,1 +1,26 @@
-# TODO: Your code
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: yago0ar/express-fe:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "3000"
+            - name: BASE_URL
+              value: http://backend:8080/api
+          ports:
+            - containerPort: 3000
+            
