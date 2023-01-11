@@ -53,10 +53,13 @@ spec:
     stages {
         stage('Test') {
             steps {
-                // TODO: Run 'npm test' using the node container
-                // TODO: Make sure you do it inside express-fe folder.
-                // Search google for Jenkins pipeline 'dir' function
-                echo 'Test stage'
+                // Run 'npm test' using the node container
+                // Make sure you do it inside express-fe folder.
+                container(name: 'node') {
+                    dir (path: './express-fe') {
+                        sh 'npm test'
+                    }
+                }
             }
         }
         stage('Build image') {
