@@ -78,12 +78,23 @@ spec:
         }
         stage('Deploy') {
             steps {
-                echo 'Deployment stage'
-                // TODO: Need to do two things
-                // TODO: First: somehow using bash, substitute new params.IMAGE_NAME and BUILD_NUMBER variable into your frontend deployment.
-                // TODO: Hint: bitnami/kubectl has 'sed' utility available
-                // TODO: But you can use any other solution (Kustomize, etc.)
-                // TODO: Second - use kubectl apply from kubectl container
+                // Need to do two things
+                // First: somehow using bash, substitute new params.IMAGE_NAME and BUILD_NUMBER variable into your frontend deployment.
+                // Hint: bitnami/kubectl has 'sed' utility available
+                // But you can use any other solution (Kustomize, etc.)
+                // Second - use kubectl apply from kubectl container
+
+                container(name: 'kubectl') {
+                    sh """cat <<EOF >./k8s/kustomization.yaml
+resources:
+- frontend-deployment.yaml
+images:
+- name: yago0ar/express-fe
+  newName: "${params.IMAGE_NAME}"
+  newTag: "${BUILD_NUMBER}" 
+EOF"""
+                    sh 'kubectl apply --kustomize ./k8s'
+                }
             }
         }
         stage('Test deployment') {
